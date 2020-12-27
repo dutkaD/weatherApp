@@ -2,6 +2,7 @@ package com.creatision.weather.controller;
 
 import com.creatision.weather.WeatherRequest;
 import com.creatision.weather.WeatherService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,9 +25,9 @@ public class MainController {
 
 
     @PostMapping("/getWeather")
-    public String getWeatherForCity(@ModelAttribute("weatherRequest") WeatherRequest request) {
+    public String getWeatherForCity(@ModelAttribute("weatherRequest") WeatherRequest request) throws JsonProcessingException {
 
-        String response = weatherService.getPostsPlainJSON(request.getZipCode());
+        String response = weatherService.getWeatherData(request.getZipCode());
         return "index";
     }
 
