@@ -1,0 +1,21 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hello</title>
+</head>
+<body>
+<div>
+    <form th:action="@{/getWeather}" method="post" th:object="${weatherRequest}">
+        <label>Enter the city name:</label>
+        <input id="search" name="searchInput" th:field="*{zipCode}"/>
+        <th>
+            <button  type="submit">Check weather</button>
+        </th>
+
+    </form>
+</div>
+</body>
+</html>
+
+
+

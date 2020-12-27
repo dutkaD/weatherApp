@@ -1,5 +1,6 @@
 package com.creatision.weather;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -9,13 +10,17 @@ public class WeatherService {
 
     private final RestTemplate restTemplate;
 
+    @Value("${weather.api.url}")
+    private String articleShopUrl;
+
     public WeatherService(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    public String getPostsPlainJSON() {
-        String url = "https://api.openweathermap.org/data/2.5/weather?zip=80636,de&appid=46cdf5e3eda364b01ba3f504ebb3473c&units=metric";
-        return this.restTemplate.getForObject(url, String.class);
+    public String getPostsPlainJSON(String zipCode) {
+        String weatherApiUrl = String.format(articleShopUrl, zipCode);
+
+        return this.restTemplate.getForObject(weatherApiUrl, String.class);
     }
 
 }
