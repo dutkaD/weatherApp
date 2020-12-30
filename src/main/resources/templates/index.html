@@ -6,16 +6,25 @@
 <body>
 <div>
     <form th:action="@{/getWeather}" method="post" th:object="${weatherRequest}">
-        <label>Enter the city name:</label>
+        <label>Enter the postal code:</label>
         <input id="search" name="searchInput" th:field="*{zipCode}"/>
-        <th>
-            <button  type="submit">Check weather</button>
-        </th>
-
+        <button  type="submit">Check weather</button>
     </form>
+
+    <label th:text="${errorMessage}"></label>
+
+    <form th:if="${weatherResponse != null}">
+        <div >
+            <p>Temperature: <label th:text="${weatherResponse.mainWeatherData.temperature} + ' °C'"></label></p>
+            <p>Feels like: <label th:text="${weatherResponse.mainWeatherData.temperatureFeels} + ' °C'"></label></p>
+            <p>Humidity: <label th:text="${weatherResponse.mainWeatherData.humidity} + ' %'"></label></p>
+        </div>
+    </form>
+
 </div>
 </body>
 </html>
+
 
 
 

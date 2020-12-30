@@ -2,6 +2,7 @@ package com.creatision.weather.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 @JsonIgnoreProperties
 public class MainWeatherData {
@@ -17,4 +18,10 @@ public class MainWeatherData {
 
     @JsonProperty("temp_max")
     public String temperatureMax;
+
+    @JsonProperty("pressure")
+    public String pressure;
+
+    @JsonProperty("humidity")
+    public String humidity;
 }

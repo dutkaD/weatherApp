@@ -1,5 +1,6 @@
 package com.creatision.weather;
 
+import com.creatision.weather.exceptions.WeatherDataNotFoundException;
 import com.creatision.weather.response.WeatherResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -7,7 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
 
 @Service
 public class WeatherService {
@@ -21,16 +24,19 @@ public class WeatherService {
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    public String getWeatherData(String zipCode) throws JsonProcessingException {
-        String weatherApiUrl = String.format(this.weatherApiUrl, zipCode);
-        String response = this.restTemplate.getForObject(weatherApiUrl, String.class);
+    public WeatherResponse getWeatherData(String zipCode) throws WeatherDataNotFoundException, JsonProcessingException {
+        String uri = String.format(this.weatherApiUrl, zipCode);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        WeatherResponse weatherResponse = mapper.readValue(response, WeatherResponse.class);
+        try {
+            String response = this.restTemplate.getForObject(uri, String.class);
+            return mapper.readValue(response, WeatherResponse.class);
+        }catch (HttpClientErrorException ex){
+            throw new WeatherDataNotFoundException(String.format("Sorry, can't find weather data. Are you sure %s is a correct postal code?", zipCode));
+        }
 
-        return "";
     }
 
 }

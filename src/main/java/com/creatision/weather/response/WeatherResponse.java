@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties
 public class WeatherResponse {
+
     @JsonProperty("main")
     public MainWeatherData mainWeatherData;
 }
