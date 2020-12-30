@@ -1,42 +1,38 @@
 package com.creatision.weather;
 
 import com.creatision.weather.exceptions.WeatherDataNotFoundException;
-import com.creatision.weather.response.WeatherResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.creatision.weather.exceptions.ZipCodeValidationException;
+import com.creatision.weather.response.WeatherData;
+import com.creatision.weather.validation.ZipCodeValidator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
-
+import java.io.IOException;
+import java.net.http.HttpResponse;
 
 @Service
+@RequiredArgsConstructor
 public class WeatherService {
 
-    private final RestTemplate restTemplate;
+    private final WeatherProxy proxy;
+    private final ZipCodeValidator validator;
 
-    @Value("${weather.api.url}")
-    private String weatherApiUrl;
+    public WeatherData getWeatherDataForZip(String zipCode) throws IOException, InterruptedException, WeatherDataNotFoundException, ZipCodeValidationException {
 
-    public WeatherService(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
-    }
+        if (zipCode.length() == 0 || zipCode.contains(" ")){
+            throw new ZipCodeValidationException("Postal code is not valid");
+        }
 
-    public WeatherResponse getWeatherData(String zipCode) throws WeatherDataNotFoundException, JsonProcessingException {
-        String uri = String.format(this.weatherApiUrl, zipCode);
+        HttpResponse<String> response = proxy.getWeatherData(zipCode);
+        if (response.statusCode() == 404){
+            throw new WeatherDataNotFoundException(String.format("Sorry, couldn't find weather data for: %s. Please check if the postal code correct" , zipCode));
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        try {
-            String response = this.restTemplate.getForObject(uri, String.class);
-            return mapper.readValue(response, WeatherResponse.class);
-        }catch (HttpClientErrorException ex){
-            throw new WeatherDataNotFoundException(String.format("Sorry, can't find weather data. Are you sure %s is a correct postal code?", zipCode));
-        }
-
+        return mapper.readValue(response.body(), WeatherData.class);
     }
 
 }
