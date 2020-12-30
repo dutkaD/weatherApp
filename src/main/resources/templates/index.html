@@ -2,9 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Weather</title>
+    <link rel="stylesheet" href="pageStyle.css">
 </head>
 <body>
 <div>
+    <h1>Welcome to the amazing Weather App!</h1>
     <form th:action="@{/getWeather}" method="post" th:object="${weatherRequest}">
         <label>Enter the postal code:</label>
         <input id="search" name="searchInput" th:field="*{zipCode}"/>
