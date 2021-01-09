@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class WeatherRequest {
     String zipCode;
+    String country;
 }

@@ -1,51 +1,50 @@
 package com.creatision.weather;
 
-import com.creatision.weather.exceptions.WeatherDataNotFetchedException;
+import com.creatision.weather.exceptions.ProxyCallFailedException;
+import com.creatision.weather.response.WeatherResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Resource;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.UnknownHostException;
 
 
 @Service
+@Slf4j
 public class WeatherProxy {
-
-    private final RestTemplate restTemplate;
 
     @Value("${weather.api.url}")
     private String weatherApiUrl;
 
-    public WeatherProxy(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
+    @Resource
+    private RestTemplate restTemplate;
+
+    public WeatherResponse getWeatherData(WeatherRequest request) throws ProxyCallFailedException {
+
+        String weatherUrl = String.format(this.weatherApiUrl, request.getZipCode(), request.getCountry());
+        try {
+            ResponseEntity<WeatherResponse> response = restTemplate.postForEntity(
+                    weatherUrl,
+                    request,
+                    WeatherResponse.class);
+            return response.getBody();
+
+        } catch (HttpStatusCodeException ex) {
+            throw new ProxyCallFailedException(request.getZipCode(), request.country);
+        } catch (ResourceAccessException ex){
+            throw new ProxyCallFailedException("Couldn't find any data! Make sure you have internet connection.");        }
     }
 
-    public HttpResponse<String> getWeatherData(String zipCode) throws WeatherDataNotFetchedException, IOException, InterruptedException {
-        String uri = String.format(this.weatherApiUrl, zipCode);
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uri))
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        handleErrors(response.statusCode(), zipCode);
-        return response;
-    }
-
-    private void handleErrors(int statusCode, String postalCode) throws WeatherDataNotFetchedException {
-        if (HttpStatus.valueOf(statusCode).is5xxServerError()){
-            throw new WeatherDataNotFetchedException("Seems like there is some problem with the weather service! Try again later.");
-        }
-        if (HttpStatus.valueOf(statusCode).is4xxClientError()){
-            throw new WeatherDataNotFetchedException(String.format("Sorry, couldn't find anything for %s. Are you sure you entered a correct postal code?", postalCode));
-        }
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
 }

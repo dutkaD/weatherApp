@@ -2,11 +2,12 @@ package com.creatision.weather.validation;
 
 
 import com.creatision.weather.exceptions.ZipCodeValidationException;
-import org.springframework.stereotype.Service;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-import javax.validation.ValidationException;
 
-@Service
+@Component
+@NoArgsConstructor
 public class ZipCodeValidator{
 
     public void validate(String zipCode) throws ZipCodeValidationException {
