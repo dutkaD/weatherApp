@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class WeatherProxyTest {
 
@@ -63,7 +62,7 @@ public class WeatherProxyTest {
     }
 
     @Test
-    public void apiReturns200() throws ProxyCallFailedException {
+    public void apiCall_successful() throws ProxyCallFailedException {
         WeatherRequest request = new WeatherRequest();
         request.setZipCode("80636");
         request.setCountry("de");

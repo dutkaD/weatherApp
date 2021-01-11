@@ -13,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 
-
 @Service
 @Slf4j
 public class WeatherProxy {

@@ -19,5 +19,4 @@ public class WeatherService {
         validator.validate(request.getZipCode());
         return proxy.getWeatherData(request);
     }
-
 }

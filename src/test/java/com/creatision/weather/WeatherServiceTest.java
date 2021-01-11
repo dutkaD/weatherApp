@@ -5,14 +5,13 @@ import com.creatision.weather.exceptions.ZipCodeValidationException;
 import com.creatision.weather.response.WeatherResponse;
 import com.creatision.weather.validation.ZipCodeValidator;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
