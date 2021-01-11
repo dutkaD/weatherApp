@@ -12,8 +12,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.net.UnknownHostException;
 
 
 @Service
